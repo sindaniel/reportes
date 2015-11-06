@@ -20,6 +20,8 @@ default: &default
 development:
   <<: *default
   database: reportes
+  socket: /Applications/XAMPP/xamppfiles/var/mysql/mysql.sock
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

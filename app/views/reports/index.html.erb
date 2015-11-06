@@ -1,0 +1,52 @@
+<h3>Reportes generados</h3>
+
+<p>
+  <a href="<%= new_report_path %>" class="btn btn-primary">
+    <i class="entypo-plus"></i>
+    Agregar Reporte
+  </a>
+</p>
+
+
+<table class="table table-bordered table-striped datatable" id="table-2">
+  <thead>
+  <tr>
+    <th>Nombre</th>
+    <th>Fecha</th>
+
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+
+
+  <% @reports.each do |report| %>
+  <tr>
+
+    <td><%= report.nombre %></td>
+    <td>7.2</td>
+
+    <td>
+      <a href="<%=  edit_report_path(report.id) %>" class="btn btn-default btn-sm btn-icon icon-left">
+        <i class="entypo-pencil"></i>
+        Editar
+      </a>
+      <a href="<%= pdf_path(report.id) %>" class="btn btn-info btn-sm btn-icon icon-left">
+        <i class="entypo-info"></i>
+        Generar PDF
+      </a>
+      <a href="#" class="btn btn-danger btn-sm btn-icon icon-left">
+        <i class="entypo-cancel"></i>
+        Eliminar
+      </a>
+
+    </td>
+  </tr>
+  <% end %>
+
+  </tbody>
+</table>
+
+
+
+

@@ -1,0 +1,901 @@
+
+<%
+
+
+   browsers = []
+
+   @totalLlamadas.each do |row|
+
+
+
+     if browsers[row.fecha.strftime("%d").to_i].nil?
+       browsers[row.fecha.strftime("%d").to_i] = [0,0,0]
+     end
+
+
+     if row.estado == 1
+       browsers[row.fecha.strftime("%d").to_i][0] = browsers[row.fecha.strftime("%d").to_i][0] +1
+
+
+
+     else
+
+       browsers[row.fecha.strftime("%d").to_i][1] = browsers[row.fecha.strftime("%d").to_i][1] + 1
+
+     end
+
+     browsers[row.fecha.strftime("%d").to_i][2] = browsers[row.fecha.strftime("%d").to_i][2] + 1
+
+     # datos[row.fecha.strftime("%d").to_i].push(1)
+
+
+   end
+
+
+
+
+   llamadaPorHora = []
+
+   @totalLlamadas.each do |row|
+
+
+
+
+     if llamadaPorHora[row.fecha.strftime("%H").to_i].nil?
+       llamadaPorHora[row.fecha.strftime("%H").to_i] = [0,0,0]
+     end
+
+
+     if row.estado == 1
+       llamadaPorHora[row.fecha.strftime("%H").to_i][0] = llamadaPorHora[row.fecha.strftime("%H").to_i][0] +1
+
+
+
+     else
+
+       llamadaPorHora[row.fecha.strftime("%H").to_i][1] = llamadaPorHora[row.fecha.strftime("%H").to_i][1] + 1
+
+     end
+
+     llamadaPorHora[row.fecha.strftime("%H").to_i][2] = llamadaPorHora[row.fecha.strftime("%H").to_i][2] + 1
+
+
+   end
+
+
+
+
+
+   llamadaPorDiaSemana = []
+
+   @totalLlamadas.each do |row|
+
+
+
+
+     if llamadaPorDiaSemana[row.fecha.strftime("%w").to_i].nil?
+       llamadaPorDiaSemana[row.fecha.strftime("%w").to_i] = [0,0,0]
+     end
+
+
+     if row.estado == 1
+       llamadaPorDiaSemana[row.fecha.strftime("%w").to_i][0] = llamadaPorDiaSemana[row.fecha.strftime("%w").to_i][0] +1
+     else
+       llamadaPorDiaSemana[row.fecha.strftime("%w").to_i][1] = llamadaPorDiaSemana[row.fecha.strftime("%w").to_i][1] + 1
+
+     end
+
+     llamadaPorDiaSemana[row.fecha.strftime("%w").to_i][2] = llamadaPorDiaSemana[row.fecha.strftime("%w").to_i][2] + 1
+
+
+   end
+
+
+
+
+
+
+
+%>
+
+
+
+<%
+
+
+
+
+   d = Date.new(@totalLlamadas[0].fecha.strftime("%Y").to_i, @totalLlamadas[0].fecha.strftime("%m").to_i,@totalLlamadas[0].fecha.strftime("%d").to_i)
+
+
+   ultimodiadelmes = d.last_day_of_month
+
+   lunes = d.all_mondays_in_month.count
+   martes = d.all_tuesdays_in_month.count
+   miercoles = d.all_wednesdays_in_month.count
+   jueves = d.all_thursdays_in_month.count
+   viernes = d.all_fridays_in_month.count
+   sabado = d.all_saturdays_in_month.count
+   domingo = d.all_sundays_in_month.count
+
+
+   dias = [domingo,lunes,martes,miercoles,jueves,viernes,sabado]
+
+
+
+%>
+
+
+
+
+<!doctype html>
+<html lang="es">
+<head>
+
+
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="http://localhost/bootstrap.css"/>
+  <style>
+
+    table{
+        border:0;
+        width: 100%;
+    }
+          td,tr{
+              padding: 0;
+          }
+
+          body{
+              border: 0;
+              margin: 0;
+          }
+          header{
+              text-align: right;
+              width: 100%;
+              float: left;
+              padding: 15px;
+              -webkit-box-sizing: border-box;
+              -moz-box-sizing: border-box;
+              box-sizing: border-box;
+
+          }
+          #home{
+              text-align: center;
+              float: left;
+              width: 100%;
+
+
+          }
+
+
+
+
+
+
+           h1{
+               width: 100%;
+               text-align: center;
+              margin-bottom: 68px;
+              font-size: 20px;
+          }
+
+    h2{
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+        font-size: 20px;
+    }
+
+    .col-md-12{
+        float: left;
+        width: 100%;
+        padding:0 15px !important;
+        color: #000000;
+    }
+
+    .col-md-12 p{
+        padding:0 15px;
+        font-size: 16px;
+        text-align: justify;
+    }
+
+    .table{
+        margin-top: 15px;
+    }
+
+
+
+          section{
+              background: url(http://localhost/bg.png) no-repeat;
+              float: left;
+              width: 100%;
+
+
+
+              height: 776px;
+          }
+
+
+
+          .row{
+              width: 100%;
+          }
+          .col-md-5{
+              width: 50%;
+              padding: 30px;
+              float: left;
+              -webkit-box-sizing: border-box;
+              -moz-box-sizing: border-box;
+              box-sizing: border-box;
+          }
+
+    .col-md-5 table{
+        width:90%
+    }
+  </style>
+
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+
+
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+          // Create the data table.
+          var data = google.visualization.arrayToDataTable([
+              ['Total Llamadas', 'Contestadas', 'No Contestadas', 'Total'],
+              ['Llamadas', <%= @llamadasContestadas.count %>, <%= @llamadasNoContestadas.count %>, <%= @llamadasContestadas.count + @llamadasNoContestadas.count %>]
+          ]);
+
+
+
+
+          <%
+
+           total = @llamadasContestadas.count + @llamadasNoContestadas.count
+
+           llamadasContestadasPorcentaje = (@llamadasContestadas.count * 100) / total
+           llamadasNoContestadasPorcentaje = (@llamadasNoContestadas.count * 100) / total
+
+
+
+           %>
+          var data2 = google.visualization.arrayToDataTable([
+              ['Total Llamadas', 'Contestadas', 'No Contestadas'],
+              ['Porcentaje', <%= llamadasContestadasPorcentaje %>, <%= llamadasNoContestadasPorcentaje %>]
+          ]);
+
+
+
+
+          var data3 = google.visualization.arrayToDataTable([
+              ['Dia', 'Contestadas', 'No Contestadas', 'Total'],
+              <% browsers.each_with_index do |item, i| %>
+              <% if i != 0 %>
+              ['<%= i %>', <%= browsers[i][0] %>, <%= browsers[i][1] %>,<%= browsers[i][2] %>],
+              <% end %>
+              <% end %>
+          ]);
+
+
+          var data4 = google.visualization.arrayToDataTable([
+              ['Dia', 'Contestadas', 'No Contestadas', 'Total'],
+              <% llamadaPorHora.each_with_index do |item, i| %>
+              <% if i >= 6 and  i<=21 %>
+              [<%= i %>, <%= llamadaPorHora[i][0] %>, <%= llamadaPorHora[i][1] %>,<%= llamadaPorHora[i][2] %>],
+              <% end %>
+              <% end %>
+          ]);
+
+          <% diasL = "" %>
+
+
+
+          var data5 = google.visualization.arrayToDataTable([
+              ['Dia', 'Contestadas', 'No Contestadas', 'Total'],
+              <% llamadaPorDiaSemana.each_with_index do |item, i| %>
+              <% case i
+when 0
+diasL = "Domingo"
+when 1
+diasL = "Lunes"
+when 2
+diasL = "Martes"
+when 3
+diasL = "Miercoles"
+when 4
+diasL = "Jueves"
+when 5
+diasL = "Viernes"
+when 6
+diasL = "Sabado"
+end
+
+%>
+
+              //<%= dias[i] %> <%= llamadaPorDiaSemana[i][2] %>
+              ['<%= diasL %>', <%= llamadaPorDiaSemana[i][0]/dias[i] %>, <%= llamadaPorDiaSemana[i][1]/dias[i] %>,<%= llamadaPorDiaSemana[i][2]/dias[i] %>],
+              <% end %>
+          ]);
+
+
+
+          // Set chart options
+          var options = {'title':'Total Llamadas',
+              'legend':'bottom',
+          };
+          // Set chart options
+          var options2 = {'title':'Porcentaje Llamadas',
+              'legend':'bottom',
+          };
+          var options3 = {'title':'Llamadas por dia',
+              'legend':'bottom',
+              hAxis: {minValue: 1, textStyle: {fontSize: 12}, format: '0', maxValue: <%= ultimodiadelmes %>, gridlines: {count: <%= ultimodiadelmes %>}}
+
+          };
+
+
+          var options4 = {'title':'Llamadas por hora',
+              'legend':'bottom',
+              hAxis: {maxValue: 16,  gridlines: {count: 16}}
+          };
+
+
+          var options5 = {'title':'Llamadas por dia de la semana',
+              'legend':'bottom',
+          };
+          // Set chart options
+
+          // Instantiate and draw our chart, passing in some options.
+          var chart = new google.visualization.ColumnChart(document.getElementById('totalLlamadas'));
+          chart.draw(data, options);
+          var chart2 = new google.visualization.ColumnChart(document.getElementById('totalLlamadasPorcentaje'));
+          chart2.draw(data2, options2);
+
+
+
+
+        /*  var chart3 = new google.visualization.ColumnChart(document.getElementById('totalLlamadasPorDia'));
+
+
+          google.visualization.events.addListener(chart3, 'ready', function () {
+              chart3.innerHTML = '<img src="' + chart3.getImageURI() + '">';
+              console.log(chart_div.innerHTML);
+          });
+          chart3.draw(data3, options3); */
+
+
+
+          var chart_div = document.getElementById('totalLlamadasPorDia');
+          var chart3 = new google.visualization.ColumnChart(chart_div);
+
+          // Wait for the chart to finish drawing before calling the getImageURI() method.
+          google.visualization.events.addListener(chart3, 'ready', function () {
+              chart_div.innerHTML = '<img src="' + chart3.getImageURI() + '">';
+              console.log(chart_div.innerHTML);
+          });
+
+          chart3.draw(data3, options3);
+
+
+
+
+
+
+
+          var chart4 = new google.visualization.ColumnChart(document.getElementById('totalLlamadasPorHora'));
+          chart4.draw(data4, options4);
+
+
+
+          var chart5 = new google.visualization.ColumnChart(document.getElementById('llamadasPorDiaDeLaSemana'));
+          chart5.draw(data5, options5);
+
+
+      }
+
+
+
+
+
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+</head>
+<body>
+
+<section>
+  <header>
+    <%= wicked_pdf_image_tag 'logo.png', :width=>250  %>
+  </header>
+
+  <artitle id="home">
+
+    <h1>INFORME DE LLAMADAS MESA DE AYUDA <%= @report.text7 %></h1>
+    <h1>TENNIS</h1>
+    <h1>SISTEMA DE TELEFONIA</h1>
+    <h1>GRUPO NETHEXA </h1>
+    <h1><%= @report.text6 %></h1> <br/><br/>
+    <h1>MEDELLÍN</h1>
+
+  </artitle>
+
+
+</section>
+
+
+
+<section>
+  <header>
+    <%= wicked_pdf_image_tag 'logo.png', :width=>250  %>
+  </header>
+  <article>
+    <h2>Mesa de ayuda grupo 655</h2>
+    <h2>Total de llamadas, contestadas y no contestadas </h2>
+
+    <div class="row">
+      <div class="col-md-5">
+        <div id="totalLlamadas" style="width: 500px; margin-left: 0px; height: 200px;"></div>
+
+
+
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Llamadas</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td>Contestadas</td>
+            <td><%= @llamadasContestadas.count %></td>
+          </tr>
+
+          <tr>
+            <td>No Contestadas</td>
+            <td><%= @llamadasNoContestadas.count %></td>
+          </tr>
+          <tr>
+            <th>
+              <strong>Total</strong>
+            </th>
+            <th>
+              <%= total %>
+            </th>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+
+
+      <div class="col-md-5 col-md-offset-1">
+
+        <div id="totalLlamadasPorcentaje" style="width: 500px; height: 200px;" ></div>
+
+
+
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Estado</th>
+            <th>Llamadas</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>Contestadas</td>
+            <td><%= llamadasContestadasPorcentaje %> %</td>
+          </tr>
+
+          <tr>
+            <td>No Contestadas</td>
+            <td><%= llamadasNoContestadasPorcentaje %> %</td>
+          </tr>
+          </tbody>
+
+        </table>
+
+
+
+      </div>
+
+
+
+
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p>
+          <%= @report.text1 %>
+        </p>
+      </div>
+    </div>
+  </article>
+</section>
+
+
+
+
+<section>
+  <header>
+    <%= wicked_pdf_image_tag 'logo.png', :width=>250  %>
+  </header>
+  <article>
+
+
+    <div class="row">
+      <br/><br/>
+
+      <div class="col-md-12"  style="width: 100%; float:left">
+        <br/>
+        <div id="totalLlamadasPorDia" style="width:1100px; height: 200px;"></div>
+
+        <br/><br/><br/>
+
+
+        <table class="table" style="margin:0 15px 30px 15px">
+
+
+
+          <thead>
+          <tr>
+            <th><strong>Dia</strong></th>
+            <% browsers.each_with_index do |item, i| %>
+
+                <% if i != 0 %>
+                    <th><strong><%= i %></strong></th>
+                <% end %>
+
+
+            <% end %>
+          </tr>
+          </thead>
+
+
+          <tbody>
+          <tr>
+            <td>Contestadas</td>
+            <% browsers.each_with_index do |item, i| %>
+
+                <% if i != 0 %>
+                    <td><%= browsers[i][0] %></td>
+                <% end %>
+
+
+            <% end %>
+          </tr>
+
+          <tr>
+            <td>No Contestadas</td>
+            <% browsers.each_with_index do |item, i| %>
+
+                <% if i != 0 %>
+                    <td><%= browsers[i][1] %></td>
+                <% end %>
+
+
+            <% end %>
+          </tr>
+
+          </tbody>
+
+
+          <tfooter>
+            <tr>
+              <th><strong>Total</strong></th>
+              <% browsers.each_with_index do |item, i| %>
+
+                  <% if i != 0 %>
+                      <th><strong><%= browsers[i][2] %></strong></th>
+                  <% end %>
+
+
+              <% end %>
+            </tr>
+          </tfooter>
+        </table>
+
+
+      </div>
+
+
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p>
+          <%= @report.text2 %>
+        </p>
+      </div>
+    </div>
+
+
+
+  </article>
+</section>
+
+
+
+
+
+<section>
+
+
+  <header>
+    <%= wicked_pdf_image_tag 'logo.png', :width=>250  %>
+  </header>
+
+    <article>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <br/><br/><br/>
+          <div id="totalLlamadasPorHora" style="width: 1100px; height: 300px;"></div>
+
+
+          <table class="table" style="margin-left: 20px">
+
+
+
+            <thead>
+            <tr>
+              <th><strong>Hora</strong></th>
+              <% llamadaPorHora.each_with_index do |item, i| %>
+
+                  <% if i >= 6 and  i<=21 %>
+                      <th><strong><%= i %></strong></th>
+                  <% end %>
+
+
+              <% end %>
+            </tr>
+            </thead>
+
+
+            <tbody>
+            <tr>
+              <td>Contestadas</td>
+              <% llamadaPorHora.each_with_index do |item, i| %>
+
+                  <% if i >= 6 and  i<=21 %>
+                      <td><%= llamadaPorHora[i][0] %></td>
+                  <% end %>
+
+
+              <% end %>
+            </tr>
+
+            <tr>
+              <td>No Contestadas</td>
+              <% llamadaPorHora.each_with_index do |item, i| %>
+
+                  <% if i >= 6 and  i<=21 %>
+                      <td><%= llamadaPorHora[i][1] %></td>
+                  <% end %>
+
+
+              <% end %>
+            </tr>
+
+            </tbody>
+
+
+            <tfooter>
+              <tr>
+                <th><strong>Total</strong></th>
+                <% llamadaPorHora.each_with_index do |item, i| %>
+
+                    <% if i >= 6 and  i<=21 %>
+                        <th><strong><%= llamadaPorHora[i][2] %></strong></th>
+                    <% end %>
+
+
+                <% end %>
+              </tr>
+            </tfooter>
+          </table>
+
+
+
+
+        </div>
+
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            <%= @report.text3 %>
+          </p>
+        </div>
+      </div>
+
+
+
+
+
+
+
+    </article>
+
+</section>
+
+
+
+
+<section>
+
+
+  <article>
+
+    <header>
+      <%= wicked_pdf_image_tag 'logo.png', :width=>250  %>
+    </header>
+
+
+    <div class="row">
+      <div class="col-md-12"><br/><br/><br/>
+
+        <div id="llamadasPorDiaDeLaSemana" style="width: 1100px; height: 300px;"></div>
+
+        <br/><br/><br/>
+
+
+
+        <table class="table" style="margin-left: 20px">
+
+
+
+          <thead>
+          <tr>
+            <th>Dia</th>
+            <% llamadaPorDiaSemana.each_with_index do |item, i| %>
+
+                <% case i
+                     when 0
+                       diasL = "Domingo"
+                     when 1
+                       diasL = "Lunes"
+                     when 2
+                       diasL = "Martes"
+                     when 3
+                       diasL = "Miercoles"
+                     when 4
+                       diasL = "Jueves"
+                     when 5
+                       diasL = "Viernes"
+                     when 6
+                       diasL = "Sabado"
+                   end
+
+                %>
+
+
+
+
+                <th><%= diasL %></th>
+
+
+
+            <% end %>
+          </tr>
+          </thead>
+
+
+          <tbody>
+          <tr>
+            <td>Contestadas</td>
+            <% llamadaPorDiaSemana.each_with_index do |item, i| %>
+
+
+                <td><%= llamadaPorDiaSemana[i][0]/dias[i] %></td>
+
+
+
+            <% end %>
+          </tr>
+
+          <tr>
+            <td>No Contestadas</td>
+            <% llamadaPorDiaSemana.each_with_index do |item, i| %>
+
+
+                <td><%= llamadaPorDiaSemana[i][1]/dias[i] %></td>
+
+
+
+            <% end %>
+          </tr>
+
+          </tbody>
+
+
+          <tfooter>
+            <tr>
+              <th>Total</th>
+              <% llamadaPorDiaSemana.each_with_index do |item, i| %>
+
+
+                  <th><%= llamadaPorDiaSemana[i][2]/dias[i] %></th>
+
+
+
+              <% end %>
+            </tr>
+          </tfooter>
+        </table>
+
+
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <p>
+          <%= @report.text4 %>
+        </p>
+      </div>
+    </div>
+
+
+
+
+  </article>
+</section>
+
+
+
+
+<section>
+  <header>
+    <%= wicked_pdf_image_tag 'logo.png', :width=>250  %>
+  </header>
+  <article>
+
+
+    <div class="row">
+      <div class="col-md-12"><br/><br/>
+        <h2>Conclusiones</h2>
+        <br/><br/>
+        <p>
+          <%= @report.text5 %>
+        </p>
+      </div>
+    </div>
+
+
+
+
+  </article>
+</section>
+
+
+
+
+</body>
+</html>
